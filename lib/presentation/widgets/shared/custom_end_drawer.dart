@@ -1,11 +1,14 @@
+import 'package:e_commerce_app/domain/entities/product.dart';
+import 'package:e_commerce_app/presentation/providers/products_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CustomEndDrawer extends StatelessWidget {
+class CustomEndDrawer extends ConsumerWidget {
   const CustomEndDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     final size = MediaQuery.of(context).size;
 
     return Drawer(
@@ -19,9 +22,12 @@ class CustomEndDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 OutlinedButton(
-                  onPressed: (){}, child: Text('Clear all')
+                  onPressed: (){ ref.read( cartProvider.notifier ).clearAll(); }, child: Text('Clear all')
                 ),
-                Text('Carrito'),
+                Text('Carrito', style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+                ),),
                 OutlinedButton(onPressed: (){ context.pop(); }, child: Text('Close')),
               ],
             ),
@@ -55,49 +61,71 @@ class CustomEndDrawer extends StatelessWidget {
 }
 
 
-class _CustomListViewBuilder extends StatelessWidget {
-  const _CustomListViewBuilder();
+class _CustomListViewBuilder extends ConsumerWidget {
 
+  const _CustomListViewBuilder();
+  
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+
+    final cartItems = ref.watch( cartProvider );
+
+    if( cartItems.isEmpty ) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: Text('No hay productos aún'),),
+      );
+    }
+
     return ListView.builder(
       scrollDirection: Axis.vertical,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: 10,
+      itemCount: cartItems.length,
       shrinkWrap: true,
-      itemBuilder: (context, index) => _CustomCardItemCart(),
+      itemBuilder: (context, index) {
+        final item = cartItems[index];
+        return _CustomCardItemCart( product: item ,);
+      },
     );
   }
 }
 
 
-class _CustomCardItemCart extends StatelessWidget {
-  const _CustomCardItemCart();
+class _CustomCardItemCart extends ConsumerWidget {
+  final Product product;
+  const _CustomCardItemCart({required this.product});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Card(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           
-          FadeInImage(
-            fit: BoxFit.cover,
-            height: 150,
-            placeholder: AssetImage('assets/images/no-item.png'), 
-            image: AssetImage('assets/images/producto.png')
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FadeInImage(
+              fit: BoxFit.cover,
+              height: 150,
+              placeholder: AssetImage('assets/images/no-item.png'), 
+              image: NetworkImage(product.image)
+            ),
+          ),
+
+          Expanded(
+            child: Column(
+              children: [
+                Text(product.title),
+                Text(product.price.toString()),
+              ],
+            ),
           ),
 
           Column(
             children: [
-              Text('Name'),
-              Text('Price'),
-            ],
-          ),
-
-          Column(
-            children: [
-              OutlinedButton(onPressed: (){}, child: Text('Delete')),
+              OutlinedButton(onPressed: (){
+                ref.read( cartProvider.notifier ).removeItem(product.id);
+              }, child: Text('Delete')),
               Row( 
                 children: [
                   IconButton(onPressed: (){}, icon: Icon(Icons.add)),

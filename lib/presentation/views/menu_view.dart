@@ -10,7 +10,6 @@ class MenuView extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
 
     final productsRecomendeded = ref.watch( getProductsRecomendedProvider );
-    final productsHot = ref.watch( getHotProductsProvider );
     
     return Scaffold(
       appBar: AppBar(
@@ -21,6 +20,11 @@ class MenuView extends ConsumerWidget {
 
       body: Column(
         children: [
+          
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(alignment: Alignment.centerLeft, child: Text('Recomended', style: TextStyle( fontSize: 30, fontWeight: FontWeight.bold ),),),
+          ),
 
           Expanded(
             child: productsRecomendeded.when(
@@ -30,14 +34,21 @@ class MenuView extends ConsumerWidget {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 450,
-                            child: _CustomCard( product.image, product.title, product.description ),
-                          )
-                        ],
+                      
+                      return SizedBox(
+                        width: 700,
+                        height: 500,
+                        child: GestureDetector( 
+                          onTap: () => showDialog(
+                            context: context, 
+                            builder: (context) {
+                              return _CustomDialog(idProduct: product.id,);
+                            },
+                          ), 
+                          child: _CustomCard( product.image, product.title, product.description )
+                        ),
                       );
+
                     },
                 );
               },
@@ -46,25 +57,76 @@ class MenuView extends ConsumerWidget {
             ),
           ),
 
-          Expanded(
-            child: productsHot.when(
-              data: (data) => ListView.builder(
-                itemBuilder: (context, index) {
-                  final product = data[index];
-                  return ListTile(
-                    title: Text(product.title),
-                  );
-                },
-              ),
-              error: (error, stackTrace) => Text("$error"),
-              loading: () => Center(child: CircularProgressIndicator(),),
-            ),
-          )
         ]
       )
     );
   }
 }
+
+class _CustomDialog extends ConsumerWidget {
+  final int idProduct;
+  const _CustomDialog({required this.idProduct});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productAsync = ref.watch(getProductByIdProvider(idProduct));
+    final size = MediaQuery.of(context).size;
+
+    return productAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => AlertDialog( content: Text('Error: $error'), ),
+      data: (product) {
+        return AlertDialog(
+          
+          content: SizedBox(
+            width: 600,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  FadeInImage(
+                    placeholder: const AssetImage('assets/images/no-item.png'),
+                    image: NetworkImage( product.image ),
+                    height: size.height * 0.4,
+                    fit: BoxFit.cover,
+                  ),
+              
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(product.title, style: TextStyle( fontSize: 20 ),),
+                  ),
+              
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(product.description, style: TextStyle( fontSize: 18 ),),
+                  ),
+              
+                  Row(
+                    children: [
+                      IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                      Text('10'),
+                      IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+              
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OutlinedButton(onPressed: (){
+                          ref.read( cartProvider.notifier ).addItem(product);
+                        }, 
+                        child: Text('Submit')
+                        )
+                      ),
+                    ],
+                  ),
+              
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 class _CustomCard extends StatelessWidget {
   final String image;
@@ -75,46 +137,68 @@ class _CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final size = MediaQuery.of(context).size;
-    return SizedBox(
-      width: size.width * 0.8,
-      child: Card(
-        child: Column(
+    /* final size = MediaQuery.of(context).size; */
+
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(20)
+      ),
+      
+      child: SizedBox.expand(
+        child: Row(
           children: [
-
-            FadeInImage(
-              height: size.height * 0.2,
-              fit: BoxFit.cover,
-              image: NetworkImage(image),
-              placeholder: AssetImage('assets/images/no-item.png'),
+            
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FadeInImage(
+                  alignment: Alignment.topCenter,
+                  height: 300,
+                  fit: BoxFit.contain,
+                  image: NetworkImage(image),
+                  placeholder: AssetImage('assets/images/no-item.png'),
+                ),
+              ),
             ),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 15,),
-                  Text(title, maxLines: 3, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 15 ),),
-                  SizedBox(height: 10,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-
-                  Text(
-                    description,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5,
-                  )
-                ],
+            
+            Expanded(
+              flex: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 15,),
+                    Text(title, maxLines: 3, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 25 ),),
+                    SizedBox(height: 10,),
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    
+                    Expanded(
+                      child: Text(
+                        description,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 5,
+                        style: TextStyle(
+                          fontSize: 18
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             )
           ],

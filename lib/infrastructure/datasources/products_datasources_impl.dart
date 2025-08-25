@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 
 class ProductsDatasourcesImpl extends ProductsDatasources  {
 
-  final dio = Dio(BaseOptions( baseUrl: 'https://fakestoreapi.in/api' ));
+  final dio = Dio(BaseOptions( baseUrl: 'https://fakestoreapi.com'));
 
   @override
   Future<Product> getProduct(int id) async{
@@ -23,7 +23,7 @@ class ProductsDatasourcesImpl extends ProductsDatasources  {
   Future<List<Product>> getProductsRecomended() async{
     try {
       final response = await dio.get('/products');
-      final List products = response.data["products"];
+      final List products = response.data;
       final productos = products.map( ( product ) => Product.fromJson(product) ).toList();
       return productos;
 

@@ -1,11 +1,16 @@
+import 'package:e_commerce_app/presentation/providers/products_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+
+    final cartItems = ref.watch( cartProvider );
+
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Checkout')),
@@ -15,43 +20,46 @@ class CheckoutScreen extends StatelessWidget {
         children: [  
         
           ListView.builder(
-            itemCount: 10,
+            itemCount: cartItems.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsetsGeometry.all(10),
-                child: Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                  
-                      FadeInImage(
+              final cartItem = cartItems[index];
+
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FadeInImage(
                         fit: BoxFit.cover,
                         height: 150,
                         placeholder: AssetImage('assets/images/no-item.png'), 
-                        image: AssetImage('assets/images/producto.png')
+                        image: NetworkImage(cartItem.image)
                       ),
-                  
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Name'),
-                          Text('Price'),
-                          Text('Count'),
-                        ],
-                      ),
-                  
-                      Text('Status: Order placed'),
-                  
-                      Row( 
-                        children: [
-                          IconButton(onPressed: (){}, icon: Icon(Icons.add)),
-                          Text('10'),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
-                        ],
-                      )
-                  
-                    ],
-                  ),
+                    ),
+                
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(cartItem.title),
+                        Text(cartItem.price.toString()),
+                        Text("Count"),
+                      ],
+                    ),
+                
+                    Text('Status: Order placed'),
+                
+                    Row( 
+                      children: [
+                        IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+                        Text('10'),
+                        IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                      ],
+                    )
+                
+                  ],
                 ),
               );
             },
@@ -124,6 +132,7 @@ class CheckoutScreen extends StatelessWidget {
                                           onPressed: () {
                                             context.pop();
                                             context.push('/successful');
+                                            ref.read( cartProvider.notifier ).clearAll();
                                           },
                                           child: const Text('Yes'),
                                         ),

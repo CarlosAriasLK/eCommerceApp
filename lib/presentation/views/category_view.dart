@@ -15,7 +15,10 @@ class CategoryView extends ConsumerWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: Center(child: Text('Category')),
+        title: Center(child: Text('Categories', style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.bold
+        ),),),
       ),
 
       endDrawer: CustomEndDrawer(),

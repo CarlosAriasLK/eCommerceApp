@@ -37,7 +37,7 @@ class CustomEndDrawer extends ConsumerWidget {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: OutlinedButton(
+              child: FilledButton(
                 onPressed: (){
                   showDialog(
                     context: context, 

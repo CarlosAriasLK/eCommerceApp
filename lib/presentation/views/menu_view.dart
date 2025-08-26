@@ -13,7 +13,10 @@ class MenuView extends ConsumerWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Menu'),),
+        title: Center(child: Text('Products', style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.bold
+        ),),),
       ),
 
       endDrawer: CustomEndDrawer(),
@@ -23,7 +26,7 @@ class MenuView extends ConsumerWidget {
           
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Align(alignment: Alignment.centerLeft, child: Text('Recomended', style: TextStyle( fontSize: 30, fontWeight: FontWeight.bold ),),),
+            child: Align(alignment: Alignment.centerLeft, child: Text('Recomended', style: TextStyle( fontSize: 25, fontWeight: FontWeight.bold ),),),
           ),
 
           Expanded(
@@ -35,17 +38,21 @@ class MenuView extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final product = products[index];
                       
-                      return SizedBox(
-                        width: 700,
-                        height: 500,
-                        child: GestureDetector( 
-                          onTap: () => showDialog(
-                            context: context, 
-                            builder: (context) {
-                              return _CustomDialog(idProduct: product.id,);
-                            },
-                          ), 
-                          child: _CustomCard( product.image, product.title, product.description )
+                      return Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: 800,
+                            maxHeight: 400
+                          ),
+                          child: GestureDetector(
+                            onTap: () => showDialog(
+                              context: context, 
+                              builder: (context) {
+                                return _CustomDialog(idProduct: product.id);
+                              },
+                            ), 
+                            child: _CustomCard(product.image, product.title, product.description),
+                          ),
                         ),
                       );
 
@@ -92,7 +99,7 @@ class _CustomDialog extends ConsumerWidget {
               
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(product.title, style: TextStyle( fontSize: 20 ),),
+                    child: Text(product.title, style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold ),),
                   ),
               
                   Padding(
@@ -101,17 +108,26 @@ class _CustomDialog extends ConsumerWidget {
                   ),
               
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
-                      Text('10'),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+                      Row(
+                        children: [
+                          IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                          Text('10'),
+                          IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+
+                        ],
+                      ),
               
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton(onPressed: (){
-                          ref.read( cartProvider.notifier ).addItem(product);
-                        }, 
-                        child: Text('Submit')
+                        child: SizedBox(
+                          width: 200,
+                          child: FilledButton(onPressed: (){
+                            ref.read( cartProvider.notifier ).addItem(product);
+                          }, 
+                          child: Text('Submit')
+                          ),
                         )
                       ),
                     ],
@@ -142,67 +158,66 @@ class _CustomCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 10),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.circular(20)
+        borderRadius: BorderRadiusGeometry.circular(15)
       ),
       
-      child: SizedBox.expand(
-        child: Row(
-          children: [
-            
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FadeInImage(
-                  alignment: Alignment.topCenter,
-                  height: 300,
-                  fit: BoxFit.contain,
-                  image: NetworkImage(image),
-                  placeholder: AssetImage('assets/images/no-item.png'),
-                ),
+      child: Row(
+        children: [
+
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FadeInImage(
+                alignment: Alignment.center,
+                height: 300,
+                fit: BoxFit.contain,
+                image: NetworkImage(image),
+                placeholder: AssetImage('assets/images/no-item.png'),
               ),
             ),
-            
-            Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 15,),
-                    Text(title, maxLines: 3, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 25 ),),
-                    SizedBox(height: 10,),
-                    
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                        Icon(Icons.star, color: Colors.amberAccent.shade700,),
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    
-                    Expanded(
-                      child: Text(
-                        description,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 5,
-                        style: TextStyle(
-                          fontSize: 18
-                        ),
+          ),
+          
+          Expanded(
+            flex: 6,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(height: 15,),
+                  Text(title, maxLines: 3, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 25 ),),
+                  SizedBox(height: 10,),
+                  
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                      Icon(Icons.star, color: Colors.amberAccent.shade700,),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  
+                  Expanded(
+                    child: Text(
+                      description,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 5,
+                      style: TextStyle(
+                        fontSize: 18
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

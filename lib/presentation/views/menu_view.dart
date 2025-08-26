@@ -76,22 +76,24 @@ class _CustomDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final productAsync = ref.watch(getProductByIdProvider(idProduct));
     final size = MediaQuery.of(context).size;
+    final cart = ref.watch( cartProvider );
 
     return productAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => AlertDialog( content: Text('Error: $error'), ),
+
       data: (product) {
         return AlertDialog(
-          
           content: SizedBox(
             width: 600,
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   FadeInImage(
-                    placeholder: const AssetImage('assets/images/no-item.png'),
+                    placeholder: const AssetImage('https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZW43dXdkMHJwaTU2ejF5OXN3aHkxYzRmejFiMHVmOGF6MXJoNDJrbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif'),
                     image: NetworkImage( product.image ),
                     height: size.height * 0.4,
                     fit: BoxFit.cover,
@@ -106,16 +108,20 @@ class _CustomDialog extends ConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(product.description, style: TextStyle( fontSize: 18 ),),
                   ),
-              
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
-                          Text('10'),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+                          IconButton(onPressed: (){
+                            ref.read( cartProvider.notifier ).decreaseItem(product.id);
+                          }, icon: Icon(Icons.remove)),
+                          Text(product.quantity.toString()),
 
+                          IconButton(onPressed: (){
+                            ref.read( cartProvider.notifier ).increaseItem(product.id);
+                          }, icon: Icon(Icons.add)),
                         ],
                       ),
               
@@ -172,8 +178,8 @@ class _CustomCard extends StatelessWidget {
                 alignment: Alignment.center,
                 height: 300,
                 fit: BoxFit.contain,
-                image: NetworkImage(image),
                 placeholder: AssetImage('assets/images/no-item.png'),
+                image: NetworkImage(image),
               ),
             ),
           ),

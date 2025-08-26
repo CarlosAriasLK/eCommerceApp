@@ -103,6 +103,7 @@ class _CustomCardItemCart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Card(
@@ -136,9 +137,13 @@ class _CustomCardItemCart extends ConsumerWidget {
                 }, child: Text('Delete')),
                 Row( 
                   children: [
-                    IconButton(onPressed: (){}, icon: Icon(Icons.add)),
-                    Text('10'),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                    IconButton(onPressed: (){
+                      ref.read( cartProvider.notifier ).decreaseItem(product.id);
+                    }, icon: Icon(Icons.remove)),
+                    Text( product.quantity.toString() ),
+                    IconButton(onPressed: (){
+                      ref.read( cartProvider.notifier ).increaseItem(product.id);
+                    }, icon: Icon(Icons.add)),
                   ],
                 )
               ],

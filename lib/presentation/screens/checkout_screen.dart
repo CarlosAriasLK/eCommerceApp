@@ -10,6 +10,7 @@ class CheckoutScreen extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
 
     final cartItems = ref.watch( cartProvider );
+    final calculateTotal = ref.watch( calculateTotalProvider( cartItems ) );
 
     return Scaffold(
       appBar: AppBar(
@@ -17,12 +18,15 @@ class CheckoutScreen extends ConsumerWidget {
       ),
 
       body: Stack(
-        children: [  
-        
+        children: [
           ListView.builder(
             itemCount: cartItems.length,
             itemBuilder: (context, index) {
               final cartItem = cartItems[index];
+
+              if( cartItems.isEmpty ) {
+                return Center(child: Text('No hay items aún'),);
+              }
 
               return Card(
                 margin: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
@@ -45,7 +49,6 @@ class CheckoutScreen extends ConsumerWidget {
                       children: [
                         Text(cartItem.title),
                         Text(cartItem.price.toString()),
-                        Text("Count"),
                       ],
                     ),
                 
@@ -53,9 +56,13 @@ class CheckoutScreen extends ConsumerWidget {
                 
                     Row( 
                       children: [
-                        IconButton(onPressed: (){}, icon: Icon(Icons.add)),
-                        Text('10'),
-                        IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                        IconButton(onPressed: (){
+                          ref.read( cartProvider.notifier ).decreaseItem(cartItem.id);
+                        }, icon: Icon(Icons.remove)),
+                        Text(cartItem.quantity.toString()),
+                        IconButton(onPressed: (){
+                          ref.read( cartProvider.notifier ).increaseItem(cartItem.id);
+                        }, icon: Icon(Icons.add)),
                       ],
                     )
                 
@@ -84,11 +91,13 @@ class CheckoutScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text( 'Total:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
                             Spacer(),
 
-                            Text( '30', style: TextStyle(fontSize: 22), ),
+                            Text(
+                              "$calculateTotal Є",
+                              style: TextStyle(fontSize: 22), ),
                           ],
                         ),
                       ),

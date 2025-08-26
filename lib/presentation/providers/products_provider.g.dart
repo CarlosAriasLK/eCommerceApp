@@ -166,6 +166,123 @@ class _GetProductByIdProviderElement
   int get id => (origin as GetProductByIdProvider).id;
 }
 
+String _$calculateTotalHash() => r'695c7a08d0ee0d350727461fdd480c08cc2fc954';
+
+/// See also [calculateTotal].
+@ProviderFor(calculateTotal)
+const calculateTotalProvider = CalculateTotalFamily();
+
+/// See also [calculateTotal].
+class CalculateTotalFamily extends Family<double> {
+  /// See also [calculateTotal].
+  const CalculateTotalFamily();
+
+  /// See also [calculateTotal].
+  CalculateTotalProvider call(List<Product> products) {
+    return CalculateTotalProvider(products);
+  }
+
+  @override
+  CalculateTotalProvider getProviderOverride(
+    covariant CalculateTotalProvider provider,
+  ) {
+    return call(provider.products);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'calculateTotalProvider';
+}
+
+/// See also [calculateTotal].
+class CalculateTotalProvider extends AutoDisposeProvider<double> {
+  /// See also [calculateTotal].
+  CalculateTotalProvider(List<Product> products)
+    : this._internal(
+        (ref) => calculateTotal(ref as CalculateTotalRef, products),
+        from: calculateTotalProvider,
+        name: r'calculateTotalProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$calculateTotalHash,
+        dependencies: CalculateTotalFamily._dependencies,
+        allTransitiveDependencies:
+            CalculateTotalFamily._allTransitiveDependencies,
+        products: products,
+      );
+
+  CalculateTotalProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.products,
+  }) : super.internal();
+
+  final List<Product> products;
+
+  @override
+  Override overrideWith(double Function(CalculateTotalRef provider) create) {
+    return ProviderOverride(
+      origin: this,
+      override: CalculateTotalProvider._internal(
+        (ref) => create(ref as CalculateTotalRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        products: products,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<double> createElement() {
+    return _CalculateTotalProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CalculateTotalProvider && other.products == products;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, products.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CalculateTotalRef on AutoDisposeProviderRef<double> {
+  /// The parameter `products` of this provider.
+  List<Product> get products;
+}
+
+class _CalculateTotalProviderElement extends AutoDisposeProviderElement<double>
+    with CalculateTotalRef {
+  _CalculateTotalProviderElement(super.provider);
+
+  @override
+  List<Product> get products => (origin as CalculateTotalProvider).products;
+}
+
 String _$categoryProductsHash() => r'2d8381801d4974c6ce5e7d0379e715dc2e34a32b';
 
 /// See also [CategoryProducts].
@@ -182,7 +299,7 @@ final categoryProductsProvider =
     );
 
 typedef _$CategoryProducts = AutoDisposeAsyncNotifier<List<Product>>;
-String _$cartHash() => r'59b3e78f786422f57149849ae5be85f640fe9b1f';
+String _$cartHash() => r'75d1aea2c0860018b3393690db71e5ab7be39455';
 
 /// See also [Cart].
 @ProviderFor(Cart)

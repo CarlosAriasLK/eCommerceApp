@@ -40,10 +40,7 @@ class CategoryProducts extends _$CategoryProducts {
     }
 
   }
-
-
 }
-
 
 
 @Riverpod(keepAlive: true)
@@ -78,4 +75,25 @@ class Cart extends _$Cart {
     }
   }
 
+  void increaseItem( int idProduct ) {
+      state = state.map((p) => p.id == idProduct
+        ? p.copyWith(quantity: p.quantity + 1)
+        : p
+      ).toList();
+  }
+
+  void decreaseItem(int idProduct) {
+    state = state.map((p) {
+      if (p.id == idProduct && p.quantity > 1) {
+        return p.copyWith(quantity: p.quantity - 1);
+      }
+      return p;
+    }).toList();
+  }
+
+}
+
+@riverpod
+double calculateTotal(Ref ref, List<Product> products) {
+  return products.fold( 0, (sum, p) => sum + (p.price * p.quantity), );
 }

@@ -31,16 +31,18 @@ class ProductsDatasourcesImpl extends ProductsDatasources  {
       throw Exception("Error: $e");
     }
   }
-
+  
   @override
-  Future<List<Product>> getProductsHot() async{
+  Future<List<Product>> getProductsByCategory(String category) async{
     try {
-      final response = await dio.get('/products/category?type=mobile');
-      final List productsHot = response.data["products"];
-      return productsHot.map( (productHot) => Product.fromJson(productHot) ).toList();
+      
+      final response = await dio.get('/products/category/$category');
+      final List productsByCategory = response.data;
+      return productsByCategory.map( (product) => Product.fromJson( product ) ).toList();
 
-    }catch (e) {
-      throw Exception("Error: $e");
+    } catch (e) {
+      throw Exception("Error: $e"); 
     }
   }
+
 }

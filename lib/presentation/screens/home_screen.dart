@@ -2,7 +2,6 @@ import 'package:e_commerce_app/presentation/views/category_view.dart';
 import 'package:e_commerce_app/presentation/views/menu_view.dart';
 import 'package:e_commerce_app/presentation/widgets/shared/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   final int index;

@@ -13,20 +13,41 @@ Future<List<Product>> getProductsRecomended (Ref ref) async{
 }
 
 @riverpod
-Future<List<Product>> getHotProducts (Ref ref) async{
-  final repository = ref.watch( productsRepositoryProvider );
-  return await repository.getProductsHot();
-}
-
-@riverpod
 Future<Product> getProductById (Ref ref, int id) async{
   final repository = ref.watch( productsRepositoryProvider );
   return await repository.getProduct(id);
 }
 
 
+@riverpod
+class CategoryProducts extends _$CategoryProducts {
+
+  @override
+  Future<List<Product>> build(){
+    final repository = ref.watch( productsRepositoryProvider );
+    return repository.getProductsByCategory('jewelery');
+  }
+
+  void changeCategory( String category ) async{
+    state = const AsyncLoading();
+    try {
+      final repository = ref.watch( productsRepositoryProvider );
+      final products = await repository.getProductsByCategory(category);
+      state = AsyncData(products);
+
+    } catch (e, str) {
+      state = AsyncError(e, str);
+    }
+
+  }
+
+
+}
+
+
+
 @Riverpod(keepAlive: true)
-class cart extends _$cart {
+class Cart extends _$Cart {
   
   @override
   List<Product> build() {
@@ -56,6 +77,5 @@ class cart extends _$cart {
       throw Exception("Error: $e");
     }
   }
-
 
 }

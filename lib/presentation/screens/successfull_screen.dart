@@ -38,7 +38,7 @@ class SuccessfullScreen extends StatelessWidget {
                     itemSize: 40,
                     itemBuilder: (context, _) => const Icon(Icons.star, color: Colors.amber), 
                     onRatingUpdate: (rating) {
-                      print(rating);
+                      /* print(rating); */
                     },
                   ),
 

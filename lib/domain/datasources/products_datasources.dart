@@ -8,8 +8,7 @@ abstract class ProductsDatasources {
 
   Future<List<Product>> getProductsRecomended();
 
-  Future<List<Product>> getProductsHot();
-
   Future<Product> getProduct( int id );
 
+  Future<List<Product>> getProductsByCategory( String category );
 }

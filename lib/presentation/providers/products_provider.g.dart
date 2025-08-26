@@ -25,24 +25,6 @@ final getProductsRecomendedProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetProductsRecomendedRef = AutoDisposeFutureProviderRef<List<Product>>;
-String _$getHotProductsHash() => r'311b1e842ae39a4ede83ca703159b2e642fd1264';
-
-/// See also [getHotProducts].
-@ProviderFor(getHotProducts)
-final getHotProductsProvider =
-    AutoDisposeFutureProvider<List<Product>>.internal(
-      getHotProducts,
-      name: r'getHotProductsProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$getHotProductsHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GetHotProductsRef = AutoDisposeFutureProviderRef<List<Product>>;
 String _$getProductByIdHash() => r'7562daa0f885661dd84b53f2b73d4208b7a5257f';
 
 /// Copied from Dart SDK
@@ -184,12 +166,28 @@ class _GetProductByIdProviderElement
   int get id => (origin as GetProductByIdProvider).id;
 }
 
-String _$cartHash() => r'0ccfa044cb96b73ddc82a39e33125ee5026960c3';
+String _$categoryProductsHash() => r'2d8381801d4974c6ce5e7d0379e715dc2e34a32b';
 
-/// See also [cart].
-@ProviderFor(cart)
-final cartProvider = NotifierProvider<cart, List<Product>>.internal(
-  cart.new,
+/// See also [CategoryProducts].
+@ProviderFor(CategoryProducts)
+final categoryProductsProvider =
+    AutoDisposeAsyncNotifierProvider<CategoryProducts, List<Product>>.internal(
+      CategoryProducts.new,
+      name: r'categoryProductsProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$categoryProductsHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$CategoryProducts = AutoDisposeAsyncNotifier<List<Product>>;
+String _$cartHash() => r'59b3e78f786422f57149849ae5be85f640fe9b1f';
+
+/// See also [Cart].
+@ProviderFor(Cart)
+final cartProvider = NotifierProvider<Cart, List<Product>>.internal(
+  Cart.new,
   name: r'cartProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
@@ -198,6 +196,6 @@ final cartProvider = NotifierProvider<cart, List<Product>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef _$cart = Notifier<List<Product>>;
+typedef _$Cart = Notifier<List<Product>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

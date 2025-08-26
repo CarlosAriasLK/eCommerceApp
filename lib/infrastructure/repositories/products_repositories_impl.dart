@@ -19,9 +19,11 @@ class ProductsRepositoriesImpl extends ProductsRepositories {
   Future<List<Product>> getProductsRecomended() {
     return datasources.getProductsRecomended();
   }
-
+  
   @override
-  Future<List<Product>> getProductsHot() {
-    return datasources.getProductsHot();
+  Future<List<Product>> getProductsByCategory(String category) {
+    return datasources.getProductsByCategory(category);
   }
+
+ 
 }

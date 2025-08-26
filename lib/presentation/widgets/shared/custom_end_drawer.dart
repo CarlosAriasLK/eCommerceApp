@@ -18,38 +18,44 @@ class CustomEndDrawer extends ConsumerWidget {
           scrollDirection: Axis.vertical,
           children: [
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: (){ ref.read( cartProvider.notifier ).clearAll(); }, child: Text('Clear all')
-                ),
-                Text('Carrito', style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),),
-                OutlinedButton(onPressed: (){ context.pop(); }, child: Text('Close')),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OutlinedButton(
+                    onPressed: (){ ref.read( cartProvider.notifier ).clearAll(); }, child: Text('Clear all')
+                  ),
+                  Text('Carrito', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  OutlinedButton(onPressed: (){ context.pop(); }, child: Text('Close')),
+                ],
+              ),
             ),
 
-            OutlinedButton(
-              onPressed: (){
-                showDialog(
-                  context: context, 
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Notice'),
-                      content: Text('Whether to submit an order'),
-                      actions: [
-                        OutlinedButton(onPressed: (){ context.pop(); }, child: Text('No')),
-                        OutlinedButton(onPressed: (){ context.pop(); context.push('/checkout'); context.pop(); }, child: Text('Yes')),
-                      ],
-                    );
-                  },
-                );
-              },
-
-              child: Text('Submit order')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: OutlinedButton(
+                onPressed: (){
+                  showDialog(
+                    context: context, 
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Notice'),
+                        content: Text('Whether to submit an order'),
+                        actions: [
+                          OutlinedButton(onPressed: (){ context.pop(); }, child: Text('No')),
+                          OutlinedButton(onPressed: (){ context.pop(); context.push('/checkout'); context.pop(); }, child: Text('Yes')),
+                        ],
+                      );
+                    },
+                  );
+                },
+              
+                child: Text('Submit order')
+              ),
             ),
             
             _CustomListViewBuilder()
@@ -97,46 +103,49 @@ class _CustomCardItemCart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FadeInImage(
-              fit: BoxFit.cover,
-              height: 150,
-              placeholder: AssetImage('assets/images/no-item.png'), 
-              image: NetworkImage(product.image)
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: FadeInImage(
+                fit: BoxFit.cover,
+                height: 150,
+                placeholder: AssetImage('assets/images/no-item.png'), 
+                image: NetworkImage(product.image)
+              ),
             ),
-          ),
-
-          Expanded(
-            child: Column(
+      
+            Expanded(
+              child: Column(
+                children: [
+                  Text(product.title),
+                  Text(product.price.toString()),
+                ],
+              ),
+            ),
+      
+            Column(
               children: [
-                Text(product.title),
-                Text(product.price.toString()),
+                OutlinedButton(onPressed: (){
+                  ref.read( cartProvider.notifier ).removeItem(product.id);
+                }, child: Text('Delete')),
+                Row( 
+                  children: [
+                    IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+                    Text('10'),
+                    IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+                  ],
+                )
               ],
             ),
-          ),
-
-          Column(
-            children: [
-              OutlinedButton(onPressed: (){
-                ref.read( cartProvider.notifier ).removeItem(product.id);
-              }, child: Text('Delete')),
-              Row( 
-                children: [
-                  IconButton(onPressed: (){}, icon: Icon(Icons.add)),
-                  Text('10'),
-                  IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
-                ],
-              )
-            ],
-          ),
-
-        ],
+      
+          ],
+        ),
       ),
     );
   }
